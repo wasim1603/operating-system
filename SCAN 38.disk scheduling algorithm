@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int calculateSeekTime(int requestQueue[], int head, int direction, int n, int diskSize) {
+    int seekCount = 0;
+
+   
+    if (direction == 0) { // Moving towards lower track numbers
+        qsort(requestQueue, n, sizeof(int), compare);
+    } else { 
+        qsort(requestQueue, n, sizeof(int), compare);
+        reverseArray(requestQueue, n);
+    }
+
+    
+    int headIndex = 0;
+    while (headIndex < n && requestQueue[headIndex] < head) {
+        headIndex++;
+    }
+
+   
+    for (int i = headIndex - 1; i >= 0; i--) {
+        seekCount += abs(head - requestQueue[i]);
+        head = requestQueue[i];
+    }
+
+   
+    for (int i = headIndex; i < n; i++) {
+        seekCount += abs(head - requestQueue[i]);
+        head = requestQueue[i];
+    }
+
+    return seekCount;
+}
+
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+
+void reverseArray(int arr[], int size) {
+    int start = 0;
+    int end = size - 1;
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+int main() {
+    int n, head, direction, totalSeekTime, diskSize;
+
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+
+    int requestQueue[n];
+
+    printf("Enter the requests:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requestQueue[i]);
+    }
+
+    printf("Enter the initial position of the head: ");
+    scanf("%d", &head);
+
+    printf("Enter the direction of head movement (0 - towards lower track numbers, 1 - towards higher track numbers): ");
+    scanf("%d", &direction);
+
+    printf("Enter the size of the disk: ");
+    scanf("%d", &diskSize);
+
+    
+    totalSeekTime = calculateSeekTime(requestQueue, head, direction, n, diskSize);
+
+    printf("Total seek time using SCAN: %d\n", totalSeekTime);
+
+    return 0;
+}
