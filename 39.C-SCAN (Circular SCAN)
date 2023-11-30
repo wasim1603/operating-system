@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to calculate the total seek time for C-SCAN algorithm
+int calculateSeekTime(int requestQueue[], int head, int n, int diskSize) {
+    int seekCount = 0;
+
+    // Sort the request queue based on the head position
+    qsort(requestQueue, n, sizeof(int), compare);
+
+    // Find the index where head is located in the request queue
+    int headIndex = 0;
+    while (headIndex < n && requestQueue[headIndex] < head) {
+        headIndex++;
+    }
+
+    // Calculate seek count for requests after the head position
+    for (int i = headIndex; i < n; i++) {
+        seekCount += abs(head - requestQueue[i]);
+        head = requestQueue[i];
+    }
+
+    // If head reaches the end of the disk, move to the beginning
+    seekCount += abs(head - diskSize);
+    head = 0;
+    
+    // Continue serving requests from the beginning to head
+    for (int i = 0; i < headIndex; i++) {
+        seekCount += abs(head - requestQueue[i]);
+        head = requestQueue[i];
+    }
+
+    return seekCount;
+}
+
+// Function to compare integers (for qsort)
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int main() {
+    int n, head, totalSeekTime, diskSize;
+
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+
+    int requestQueue[n];
+
+    printf("Enter the requests:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requestQueue[i]);
+    }
+
+    printf("Enter the initial position of the head: ");
+    scanf("%d", &head);
+
+    printf("Enter the size of the disk: ");
+    scanf("%d", &diskSize);
+
+    // Calculate total seek time using C-SCAN algorithm
+    totalSeekTime = calculateSeekTime(requestQueue, head, n, diskSize);
+
+    printf("Total seek time using C-SCAN: %d\n", totalSeekTime);
+
+    return 0;
+}
