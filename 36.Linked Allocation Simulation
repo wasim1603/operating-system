@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct DiskBlock {
+    int blockNumber;
+    struct DiskBlock* next;
+};
+
+struct File {
+    int fileID;
+    struct DiskBlock* firstBlock;
+    struct DiskBlock* lastBlock;
+};
